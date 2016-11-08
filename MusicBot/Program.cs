@@ -15,7 +15,7 @@ class Program
 {
     static void Main(string[] args) => new Program().Start();
 
-    public static string botPrefix = "m!";
+    public static string botPrefix = "m!"; // Defines voting variable
 
     private DiscordClient _client;
 
@@ -28,24 +28,28 @@ class Program
             x.Mode = AudioMode.Outgoing; // Tells the AudioService that we will only be sending audio
         });
 
-        _client.Log.Message += (s, e) => Console.WriteLine($"[{e.Severity}] {e.Source}: {e.Message}");
+        _client.Log.Message += (s, e) => Console.WriteLine($"[{e.Severity}] {e.Source}: {e.Message}"); // Log errors/info to console
 
 
         _client.MessageReceived += async (s, e) =>
         {
-            if (e.Message.Text.StartsWith($"{botPrefix}summon"))
+            if (e.Message.Text.StartsWith($"{botPrefix}help"))
             {
-                if (!string.IsNullOrWhiteSpace(e.User.VoiceChannel.Name))
+                await e.Channel.SendMessage($"Available commands: {botPrefix}help, {botPrefix}summon");
+            }
+            else if (e.Message.Text.StartsWith($"{botPrefix}summon")) // Detect if message is m!summon
+            {
+                string userVC = e.User.VoiceChannel.Name; // Define 'userVC' variable
+                if (string.IsNullOrEmpty(userVC)) // Checks if 'userVC' is null
                 {
-                    string userVC = e.User.VoiceChannel.Name;
-                    var voiceChannel = _client.FindServers(e.Server.Name).FirstOrDefault().FindChannels(userVC).FirstOrDefault();
-
-                    var _vClient = await _client.GetService<AudioService>() // We use GetService to find the AudioService that we installed earlier. In previous versions, this was equivelent to _client.Audio()
-                            .Join(voiceChannel); // Join the Voice Channel, and return the IAudioClient.
+                    await e.Channel.SendMessage($"You must be in a voice channel to use this command!"); // Give error message if 'userVC' is null
                 }
                 else
                 {
-                    await e.Channel.SendMessage($"You must be in a voice channel to use this command!");
+                    var voiceChannel = _client.FindServers(e.Server.Name).FirstOrDefault().FindChannels(userVC).FirstOrDefault(); // Grabs VC object
+
+                    var _vClient = await _client.GetService<AudioService>() // We use GetService to find the AudioService that we installed earlier. In previous versions, this was equivelent to _client.Audio()
+                            .Join(voiceChannel); // Join the Voice Channel, and return the IAudioClient.
                 }
             }
         };
