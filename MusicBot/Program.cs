@@ -33,22 +33,19 @@ class Program
 
         _client.MessageReceived += async (s, e) =>
         {
-            if ((e.Channel.Name.Contains("music")) && (e.Message.Text.StartsWith(botPrefix)))
+            if (e.Message.Text.StartsWith($"{botPrefix}summon"))
             {
-                if (e.Message.Text.StartsWith($"{botPrefix}summon"))
+                if (!string.IsNullOrWhiteSpace(e.User.VoiceChannel.Name))
                 {
-                    if (!string.IsNullOrWhiteSpace(e.User.VoiceChannel.Name))
-                    {
-                        string userVC = e.User.VoiceChannel.Name;
-                        var voiceChannel = _client.FindServers(e.Server.Name).FirstOrDefault().FindChannels(userVC).FirstOrDefault();
+                    string userVC = e.User.VoiceChannel.Name;
+                    var voiceChannel = _client.FindServers(e.Server.Name).FirstOrDefault().FindChannels(userVC).FirstOrDefault();
 
-                        var _vClient = await _client.GetService<AudioService>() // We use GetService to find the AudioService that we installed earlier. In previous versions, this was equivelent to _client.Audio()
-                                .Join(voiceChannel); // Join the Voice Channel, and return the IAudioClient.
-                    }
-                    else
-                    {
-                        await e.Channel.SendMessage($"You must be in a voice channel to use this command!");
-                    }
+                    var _vClient = await _client.GetService<AudioService>() // We use GetService to find the AudioService that we installed earlier. In previous versions, this was equivelent to _client.Audio()
+                            .Join(voiceChannel); // Join the Voice Channel, and return the IAudioClient.
+                }
+                else
+                {
+                    await e.Channel.SendMessage($"You must be in a voice channel to use this command!");
                 }
             }
         };
