@@ -16,6 +16,7 @@ class Program
     static void Main(string[] args) => new Program().Start();
 
     public static string botPrefix = "m!"; // Defines voting variable
+    public static Discord.Audio.IAudioClient _vClient;
 
     private DiscordClient _client;
 
@@ -33,23 +34,38 @@ class Program
 
         _client.MessageReceived += async (s, e) =>
         {
-            if (e.Message.Text.StartsWith($"{botPrefix}help"))
+            if (e.Message.Text == $"{botPrefix}help")
             {
-                await e.Channel.SendMessage($"Available commands: {botPrefix}help, {botPrefix}summon");
+                await e.Channel.SendMessage($"Available commands: {botPrefix}help, {botPrefix}info, {botPrefix}summon, {botPrefix}disconnect");
             }
-            else if (e.Message.Text.StartsWith($"{botPrefix}summon")) // Detect if message is m!summon
+            else if (e.Message.Text == $"{botPrefix}info")
+                await e.Channel.SendMessage($"Hiya! I'm SharpTunes, a Discord Music Bot written in C# using Discord.Net. You can see my list of commands with `{botPrefix}help` and check out my source code at <https://github.com/Noahkiq/MusicBot>.");
+            else if (e.Message.Text == $"{botPrefix}summon") // Detect if message is m!summon
             {
-                string userVC = e.User.VoiceChannel.Name; // Define 'userVC' variable
-                if (string.IsNullOrEmpty(userVC)) // Checks if 'userVC' is null
+                if (e.User.VoiceChannel == null) // Checks if 'userVC' is null
                 {
                     await e.Channel.SendMessage($"You must be in a voice channel to use this command!"); // Give error message if 'userVC' is null
                 }
                 else
                 {
+                    string userVC = e.User.VoiceChannel.Name; // Define 'userVC' variable
                     var voiceChannel = _client.FindServers(e.Server.Name).FirstOrDefault().FindChannels(userVC).FirstOrDefault(); // Grabs VC object
-
-                    var _vClient = await _client.GetService<AudioService>() // We use GetService to find the AudioService that we installed earlier. In previous versions, this was equivelent to _client.Audio()
+                    _vClient = await _client.GetService<AudioService>() // We use GetService to find the AudioService that we installed earlier. In previous versions, this was equivelent to _client.Audio()
                             .Join(voiceChannel); // Join the Voice Channel, and return the IAudioClient.
+                    await e.Channel.SendMessage($"👌");
+                }
+            }
+            else if (e.Message.Text == $"{botPrefix}disconnect")
+            {
+                if (_vClient != null)
+                {
+                    await _vClient.Disconnect();
+                    _vClient = null;
+                    await e.Channel.SendMessage($"👋");
+                }
+                else
+                {
+                    await e.Channel.SendMessage($"The bot is not currently in a voice channel.");
                 }
             }
         };
