@@ -82,16 +82,16 @@ class Program
                     string input = filtering.Replace(">", ""); // Remove '>' from input
                     playMessage = e.Message; // Set 'playMessage' ID
 
-                    var urlToDownload = input;
-                    var newFilename = Guid.NewGuid().ToString();
-                    var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos";
+                    var newFilename = Guid.NewGuid().ToString(); // Create file name
+                    var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos"; // Grab video folder
+                    Directory.CreateDirectory(mp3OutputFolder); // Create video folder if not found
 
                     var downloader = new AudioDownloader(input, newFilename, mp3OutputFolder);
                     downloader.ProgressDownload += downloader_ProgressDownload;
                     downloader.FinishedDownload += downloader_FinishedDownload;
                     downloader.Download();
 
-                    videoName = downloader.OutputName;
+                    videoName = downloader.OutputName; // Grab video name
 
                     string filePath = $"{mp3OutputFolder}\\{newFilename}.mp3"; // Grab music file to play
 
