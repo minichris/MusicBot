@@ -10,6 +10,7 @@ using System.Timers;
 using NAudio;
 using NAudio.Wave;
 using NAudio.CoreAudioApi;
+using WrapYoutubeDl;
 
 class Program
 {
@@ -17,6 +18,8 @@ class Program
 
     public static string botPrefix = "m!"; // Defines voting variable
     public static Discord.Audio.IAudioClient _vClient;
+    public static Message playMessage;
+    public static string videoName = "Rick Astley - Never Gonna Give You Up";
 
     private DiscordClient _client;
 
@@ -36,7 +39,7 @@ class Program
         {
             if (e.Message.Text == $"{botPrefix}help")
             {
-                await e.Channel.SendMessage($"Available commands: {botPrefix}help, {botPrefix}info, {botPrefix}summon, {botPrefix}disconnect");
+                await e.Channel.SendMessage($"Available commands: {botPrefix}help, {botPrefix}info, {botPrefix}summon, {botPrefix}disconnect, {botPrefix}play");
             }
             else if (e.Message.Text == $"{botPrefix}info")
                 await e.Channel.SendMessage($"Hiya! I'm SharpTunes, a Discord Music Bot written in C# using Discord.Net. You can see my list of commands with `{botPrefix}help` and check out my source code at <https://github.com/Noahkiq/MusicBot>.");
@@ -68,6 +71,29 @@ class Program
                     await e.Channel.SendMessage($"The bot is not currently in a voice channel.");
                 }
             }
+            else if (e.Message.Text.StartsWith($"{botPrefix}play"))
+            {
+                if (e.Message.Text == $"{botPrefix}play")
+                    await e.Channel.SendMessage($"Proper usage: `{botPrefix}play [youtube video url]`");
+                else
+                {
+                    string rawinput = e.Message.RawText.Replace($"{botPrefix}play ", ""); // Grab raw video input
+                    string filtering = rawinput.Replace("<", ""); // Remove '<' from input
+                    string input = filtering.Replace(">", ""); // Remove '>' from input
+                    playMessage = e.Message; // Set 'playMessage' ID
+
+                    var urlToDownload = input;
+                    var newFilename = Guid.NewGuid().ToString();
+                    var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos\\";
+
+                    var downloader = new AudioDownloader(input, newFilename, mp3OutputFolder);
+                    downloader.ProgressDownload += downloader_ProgressDownload;
+                    downloader.FinishedDownload += downloader_FinishedDownload;
+                    downloader.Download();
+
+                    videoName = downloader.OutputName;
+                }
+            }
         };
 
         string token = File.ReadAllText("token.txt");
@@ -76,5 +102,15 @@ class Program
             _client.SetGame("some music");
         });
 
+    }
+
+    static void downloader_FinishedDownload(object sender, DownloadEventArgs e)
+    {
+        playMessage.Edit($"Finished! Now playing {videoName}.");
+    }
+
+    static void downloader_ProgressDownload(object sender, ProgressEventArgs e)
+    {
+        playMessage.Edit($"Download progress: {e.Percentage}%");
     }
 }
