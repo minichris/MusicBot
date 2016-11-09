@@ -84,7 +84,7 @@ class Program
 
                     var urlToDownload = input;
                     var newFilename = Guid.NewGuid().ToString();
-                    var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos\\";
+                    var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos";
 
                     var downloader = new AudioDownloader(input, newFilename, mp3OutputFolder);
                     downloader.ProgressDownload += downloader_ProgressDownload;
@@ -92,6 +92,32 @@ class Program
                     downloader.Download();
 
                     videoName = downloader.OutputName;
+
+                    string filePath = $"{mp3OutputFolder}\\{newFilename}.mp3"; // Grab music file to play
+
+                    var channelCount = _client.GetService<AudioService>().Config.Channels; // Get the number of AudioChannels our AudioService has been configured to use.
+                    var OutFormat = new WaveFormat(48000, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.
+                    using (var MP3Reader = new Mp3FileReader(filePath)) // Create a new Disposable MP3FileReader, to read audio from the filePath parameter
+                    using (var resampler = new MediaFoundationResampler(MP3Reader, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
+                    {
+                        resampler.ResamplerQuality = 60; // Set the quality of the resampler to 60, the highest quality
+                        int blockSize = OutFormat.AverageBytesPerSecond / 50; // Establish the size of our AudioBuffer
+                        byte[] buffer = new byte[blockSize];
+                        int byteCount;
+
+                        while ((byteCount = resampler.Read(buffer, 0, blockSize)) > 0) // Read audio into our buffer, and keep a loop open while data is present
+                        {
+                            if (byteCount < blockSize)
+                            {
+                                // Incomplete Frame
+                                for (int i = byteCount; i < blockSize; i++)
+                                    buffer[i] = 0;
+                            }
+                            _vClient.Send(buffer, 0, blockSize); // Send the buffer to Discord
+                        }
+                    }
+
+                    _vClient.Wait(); // Waits for the currently playing sound file to end.
                 }
             }
         };
@@ -106,11 +132,11 @@ class Program
 
     static void downloader_FinishedDownload(object sender, DownloadEventArgs e)
     {
-        playMessage.Edit($"Finished! Now playing {videoName}.");
+        playMessage.Channel.SendMessage($"Finished downloading! Now playing {videoName}.");
     }
 
     static void downloader_ProgressDownload(object sender, ProgressEventArgs e)
     {
-        playMessage.Edit($"Download progress: {e.Percentage}%");
+        // i have nothing to put here
     }
 }
