@@ -83,7 +83,7 @@ class Program
                     playMessage = e.Message; // Set 'playMessage' ID
 
                     var newFilename = Guid.NewGuid().ToString(); // Create file name
-                    var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos"; // Grab video folder
+                    var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos\\"; // Grab video folder
                     Directory.CreateDirectory(mp3OutputFolder); // Create video folder if not found
 
                     var downloader = new AudioDownloader(input, newFilename, mp3OutputFolder);
@@ -93,7 +93,7 @@ class Program
 
                     videoName = downloader.OutputName; // Grab video name
 
-                    string filePath = $"{mp3OutputFolder}\\{newFilename}.mp3"; // Grab music file to play
+                    string filePath = $"{mp3OutputFolder}{newFilename}.mp3"; // Grab music file to play
 
                     var channelCount = _client.GetService<AudioService>().Config.Channels; // Get the number of AudioChannels our AudioService has been configured to use.
                     var OutFormat = new WaveFormat(48000, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.
