@@ -132,8 +132,9 @@ class Program
             }
         };
 
+        string[] AccountData = File.ReadAllLines("account.txt");
         _client.ExecuteAndWait(async () => {
-            await _client.Connect(token, TokenType.Bot);
+            await _client.Connect(AccountData[0], AccountData[1]);
             _client.SetGame("some music");
         });
 

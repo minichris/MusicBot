@@ -91,6 +91,9 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="account.txt">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
     <Content Include="libsodium.dll">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
