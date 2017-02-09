@@ -1,22 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Discord;
 using Discord.Audio;
 using System.IO;
-using System.Timers;
-using NAudio;
 using NAudio.Wave;
-using NAudio.CoreAudioApi;
-using WrapYoutubeDl;
+using YoutubeExtractor;
 
 class Program
 {
     static void Main(string[] args) => new Program().Start();
 
-    public static string botPrefix = "m!"; // Defines voting variable
+    public static string botPrefix = "/"; // Defines voting variable
     public static Discord.Audio.IAudioClient _vClient;
     public static Message playMessage;
     public static string videoName = "Rick Astley - Never Gonna Give You Up";
@@ -74,69 +69,73 @@ class Program
             else if (e.Message.Text.StartsWith($"{botPrefix}play"))
             {
                 if (e.Message.Text == $"{botPrefix}play")
-                    await e.Channel.SendMessage($"Proper usage: `{botPrefix}play [youtube video url]`");
-                else
-                {
-                    string rawinput = e.Message.RawText.Replace($"{botPrefix}play ", ""); // Grab raw video input
-                    string filtering = rawinput.Replace("<", ""); // Remove '<' from input
-                    string input = filtering.Replace(">", ""); // Remove '>' from input
-                    playMessage = e.Message; // Set 'playMessage' ID
+                     await e.Channel.SendMessage($"Proper usage: `{botPrefix}play [youtube video url]`");
+                 else
+                 {
+                     string rawinput = e.Message.RawText.Replace($"{botPrefix}play ", ""); // Grab raw video input
+                     string filtering = rawinput.Replace("<", ""); // Remove '<' from input
+                     string input = filtering.Replace(">", ""); // Remove '>' from input
+                     playMessage = e.Message; // Set 'playMessage' ID
 
-                    var newFilename = Guid.NewGuid().ToString(); // Create file name
-                    var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos\\"; // Grab video folder
-                    Directory.CreateDirectory(mp3OutputFolder); // Create video folder if not found
+                     var newFilename = Guid.NewGuid().ToString(); // Create file name
+                     var mp3OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos"; // Grab video folder
+                     Directory.CreateDirectory(mp3OutputFolder); // Create video folder if not found
 
-                    var downloader = new AudioDownloader(input, newFilename, mp3OutputFolder);
-                    downloader.ProgressDownload += downloader_ProgressDownload;
-                    downloader.FinishedDownload += downloader_FinishedDownload;
-                    downloader.Download();
+                     IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(rawinput);
 
-                    videoName = downloader.OutputName; // Grab video name
+                     VideoInfo Video = videoInfos.First();
+                     //construct downloader
+                     var downloader = new VideoDownloader(Video, Path.Combine(mp3OutputFolder, Video.Title + Video.AudioExtension));
+                     downloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+                     try
+                     {
+                         downloader.Execute();
+                     }
+                     catch(Exception DownloadException)
+                     {
+                         Console.WriteLine(DownloadException.Message);
+                     }
 
-                    string filePath = $"{mp3OutputFolder}{newFilename}.mp3"; // Grab music file to play
-
+                    string filePath = Path.Combine(mp3OutputFolder, Video.Title + Video.AudioExtension); // Grab music file to play
+                     
                     var channelCount = _client.GetService<AudioService>().Config.Channels; // Get the number of AudioChannels our AudioService has been configured to use.
                     var OutFormat = new WaveFormat(48000, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.
-                    using (var MP3Reader = new Mp3FileReader(filePath)) // Create a new Disposable MP3FileReader, to read audio from the filePath parameter
-                    using (var resampler = new MediaFoundationResampler(MP3Reader, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
+                    try
                     {
-                        resampler.ResamplerQuality = 60; // Set the quality of the resampler to 60, the highest quality
-                        int blockSize = OutFormat.AverageBytesPerSecond / 50; // Establish the size of our AudioBuffer
-                        byte[] buffer = new byte[blockSize];
-                        int byteCount;
-
-                        while ((byteCount = resampler.Read(buffer, 0, blockSize)) > 0) // Read audio into our buffer, and keep a loop open while data is present
+                    using (var vorbisStream = new MediaFoundationReader(filePath))
+                        using (MediaFoundationResampler resampler = new MediaFoundationResampler(vorbisStream, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
                         {
-                            if (byteCount < blockSize)
+                            resampler.ResamplerQuality = 60; // Set the quality of the resampler to 60, the highest quality
+                            int blockSize = OutFormat.AverageBytesPerSecond / 50; // Establish the size of our AudioBuffer
+                            byte[] buffer = new byte[blockSize];
+                            int byteCount;
+
+                            while ((byteCount = resampler.Read(buffer, 0, blockSize)) > 0) // Read audio into our buffer, and keep a loop open while data is present
                             {
-                                // Incomplete Frame
-                                for (int i = byteCount; i < blockSize; i++)
-                                    buffer[i] = 0;
+                                if (byteCount < blockSize)
+                                {
+                                    // Incomplete Frame
+                                    for (int i = byteCount; i < blockSize; i++)
+                                        buffer[i] = 0;
+                                }
+                                _vClient.Send(buffer, 0, blockSize); // Send the buffer to Discord
                             }
-                            _vClient.Send(buffer, 0, blockSize); // Send the buffer to Discord
                         }
                     }
-
-                    _vClient.Wait(); // Waits for the currently playing sound file to end.
+                    catch(Exception ReaderException)
+                    {
+                        Console.WriteLine(ReaderException.Message);
+                    }
+                
+                     _vClient.Wait(); // Waits for the currently playing sound file to end.
                 }
             }
         };
 
-        string token = File.ReadAllText("token.txt");
         _client.ExecuteAndWait(async () => {
             await _client.Connect(token, TokenType.Bot);
             _client.SetGame("some music");
         });
 
-    }
-
-    static void downloader_FinishedDownload(object sender, DownloadEventArgs e)
-    {
-        playMessage.Channel.SendMessage($"Finished downloading! Now playing {videoName}.");
-    }
-
-    static void downloader_ProgressDownload(object sender, ProgressEventArgs e)
-    {
-        // i have nothing to put here
     }
 }
