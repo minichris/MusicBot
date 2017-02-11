@@ -3,6 +3,7 @@ using Discord.Audio;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace MusicBot
@@ -10,15 +11,37 @@ namespace MusicBot
     public partial class DragandPlay : Form
     {
         Song SongToPlay;
+        Channel UsersVoiceChannel = null;
+        Boolean FirstConnectionEstablished;
+        string[] CustomButtonData;
         public DragandPlay()
         {
             InitializeComponent();
+            CustomButtonData = File.ReadAllLines("CustomButton.txt");
+            GeneralButton.Text = CustomButtonData[2];
             DragBox.AllowDrop = true;
             DragBox.DragEnter += DragBox_DragEnter;
             DragBox.DragDrop += DragBox_DragDrop;
             FindButton.Click += FindButton_Click;
-            FindButton.Focus();
             Scanner.RunWorkerAsync();
+            foreach(Control ControlObj in this.Controls)
+            {
+                ControlObj.Enabled = false;
+            }
+            EnableControls();
+        }
+
+        private async void EnableControls()
+        {
+            while (!FirstConnectionEstablished)
+            {
+                await Task.Delay(25);
+            }
+            foreach (Control ControlObj in this.Controls)
+            {
+                ControlObj.Enabled = true;
+            }
+            FindButton.Focus();
         }
 
         private void DragBox_DragEnter(object sender, DragEventArgs e)
@@ -48,8 +71,7 @@ namespace MusicBot
 
         private async void FindButton_Click(object sender, EventArgs e)
         {
-            Console.WriteLine($"Looking for user {NameBox.Text}");
-            Channel UsersVoiceChannel = null;
+            Console.WriteLine($"Looking for user {NameBox.Text}"); 
             foreach (Server ServerObj in Program._client.Servers)
             {
                 Console.WriteLine($"Checking Server {ServerObj.Name}");
@@ -72,7 +94,7 @@ namespace MusicBot
                             }
                         }
                     }
-                }   
+                }
             }
             if (UsersVoiceChannel != null) //Found a user
             {
@@ -102,16 +124,45 @@ namespace MusicBot
             };
 
             string[] AccountData = File.ReadAllLines("account.txt");
-            Program._client.ExecuteAndWait(async () => {
+            Program._client.ExecuteAndWait(async () =>
+            {
                 await Program._client.Connect(AccountData[0], AccountData[1]);
                 Program._client.SetGame("some music");
                 Console.WriteLine("Connected!");
+                FirstConnectionEstablished = true;
             });
         }
 
         private void SongPlayer_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
             SongToPlay.Play();
+        }
+
+        private async void GeneralButton_Click(object sender, EventArgs e)
+        {
+            foreach (Server ServerObj in Program._client.Servers)
+            {
+                if (ServerObj.Name == CustomButtonData[0])
+                {
+                    foreach (Channel ChannelObj in ServerObj.AllChannels)
+                    {
+                        if (ChannelObj.Id == ulong.Parse(CustomButtonData[1]))
+                        {
+                            Program._vClient = await Program._client.GetService<AudioService>().Join(ChannelObj); // Join the Voice Channel, and return the IAudioClient.
+                            UsersVoiceChannel = ChannelObj;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void DisconnectButton_Click(object sender, EventArgs e)
+        {
+            if (UsersVoiceChannel != null)
+            {
+                Program._client.GetService<AudioService>().Leave(UsersVoiceChannel);
+                UsersVoiceChannel = null;
+            }
         }
     }
 }

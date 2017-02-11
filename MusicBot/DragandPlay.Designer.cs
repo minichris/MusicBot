@@ -34,6 +34,8 @@
             this.FindButton = new System.Windows.Forms.Button();
             this.Scanner = new System.ComponentModel.BackgroundWorker();
             this.SongPlayer = new System.ComponentModel.BackgroundWorker();
+            this.GeneralButton = new System.Windows.Forms.Button();
+            this.DisconnectButton = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.DragBox)).BeginInit();
             this.SuspendLayout();
             // 
@@ -41,7 +43,7 @@
             // 
             this.DragBox.Location = new System.Drawing.Point(12, 38);
             this.DragBox.Name = "DragBox";
-            this.DragBox.Size = new System.Drawing.Size(260, 214);
+            this.DragBox.Size = new System.Drawing.Size(260, 166);
             this.DragBox.TabIndex = 1;
             this.DragBox.TabStop = false;
             // 
@@ -51,6 +53,7 @@
             this.NameBox.Name = "NameBox";
             this.NameBox.Size = new System.Drawing.Size(145, 20);
             this.NameBox.TabIndex = 2;
+            this.NameBox.Text = "Zaperox";
             // 
             // UsernameLabel
             // 
@@ -78,15 +81,38 @@
             // 
             this.SongPlayer.DoWork += new System.ComponentModel.DoWorkEventHandler(this.SongPlayer_DoWork);
             // 
+            // GeneralButton
+            // 
+            this.GeneralButton.Location = new System.Drawing.Point(12, 210);
+            this.GeneralButton.Name = "GeneralButton";
+            this.GeneralButton.Size = new System.Drawing.Size(260, 20);
+            this.GeneralButton.TabIndex = 5;
+            this.GeneralButton.Text = "Join 77p Egg General";
+            this.GeneralButton.UseVisualStyleBackColor = true;
+            this.GeneralButton.Click += new System.EventHandler(this.GeneralButton_Click);
+            // 
+            // DisconnectButton
+            // 
+            this.DisconnectButton.Location = new System.Drawing.Point(12, 236);
+            this.DisconnectButton.Name = "DisconnectButton";
+            this.DisconnectButton.Size = new System.Drawing.Size(260, 20);
+            this.DisconnectButton.TabIndex = 6;
+            this.DisconnectButton.Text = "Disconnect";
+            this.DisconnectButton.UseVisualStyleBackColor = true;
+            this.DisconnectButton.Click += new System.EventHandler(this.DisconnectButton_Click);
+            // 
             // DragandPlay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 264);
+            this.Controls.Add(this.DisconnectButton);
+            this.Controls.Add(this.GeneralButton);
             this.Controls.Add(this.FindButton);
             this.Controls.Add(this.UsernameLabel);
             this.Controls.Add(this.NameBox);
             this.Controls.Add(this.DragBox);
+            this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "DragandPlay";
             this.Text = "DragandPlay";
             ((System.ComponentModel.ISupportInitialize)(this.DragBox)).EndInit();
@@ -103,5 +129,7 @@
         private System.Windows.Forms.Button FindButton;
         private System.ComponentModel.BackgroundWorker SongPlayer;
         public System.ComponentModel.BackgroundWorker Scanner;
+        private System.Windows.Forms.Button GeneralButton;
+        private System.Windows.Forms.Button DisconnectButton;
     }
 }

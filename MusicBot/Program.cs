@@ -8,7 +8,6 @@ using NAudio.Wave;
 using YoutubeExtractor;
 using MusicBot;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 
 class Song
 {
@@ -62,7 +61,6 @@ class Song
                             buffer[i] = 0;
                     }
                     Program._vClient.Send(buffer, 0, blockSize); // Send the buffer to Discord
-                    Console.WriteLine($"Sent buffer of block size {blockSize}");
                 }
             }
         }
