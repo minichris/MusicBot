@@ -36,14 +36,23 @@
             this.SongPlayer = new System.ComponentModel.BackgroundWorker();
             this.GeneralButton = new System.Windows.Forms.Button();
             this.DisconnectButton = new System.Windows.Forms.Button();
+            this.StopButton = new System.Windows.Forms.Button();
+            this.SampleRateBox = new System.Windows.Forms.NumericUpDown();
+            this.SampleRateLabel = new System.Windows.Forms.Label();
+            this.DragLabel = new System.Windows.Forms.Label();
+            this.YoutubeLabel = new System.Windows.Forms.Label();
+            this.YoutubeGetButton = new System.Windows.Forms.Button();
+            this.YoutubeBox = new System.Windows.Forms.TextBox();
+            this.GetYoutube = new System.ComponentModel.BackgroundWorker();
             ((System.ComponentModel.ISupportInitialize)(this.DragBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SampleRateBox)).BeginInit();
             this.SuspendLayout();
             // 
             // DragBox
             // 
-            this.DragBox.Location = new System.Drawing.Point(12, 38);
+            this.DragBox.Location = new System.Drawing.Point(12, 91);
             this.DragBox.Name = "DragBox";
-            this.DragBox.Size = new System.Drawing.Size(260, 166);
+            this.DragBox.Size = new System.Drawing.Size(260, 113);
             this.DragBox.TabIndex = 1;
             this.DragBox.TabStop = false;
             // 
@@ -101,11 +110,90 @@
             this.DisconnectButton.UseVisualStyleBackColor = true;
             this.DisconnectButton.Click += new System.EventHandler(this.DisconnectButton_Click);
             // 
+            // StopButton
+            // 
+            this.StopButton.Location = new System.Drawing.Point(224, 38);
+            this.StopButton.Name = "StopButton";
+            this.StopButton.Size = new System.Drawing.Size(48, 24);
+            this.StopButton.TabIndex = 7;
+            this.StopButton.Text = "Stop";
+            this.StopButton.UseVisualStyleBackColor = true;
+            this.StopButton.Click += new System.EventHandler(this.StopButton_Click);
+            // 
+            // SampleRateBox
+            // 
+            this.SampleRateBox.Location = new System.Drawing.Point(86, 38);
+            this.SampleRateBox.Maximum = new decimal(new int[] {
+            96000,
+            0,
+            0,
+            0});
+            this.SampleRateBox.Name = "SampleRateBox";
+            this.SampleRateBox.Size = new System.Drawing.Size(132, 20);
+            this.SampleRateBox.TabIndex = 8;
+            this.SampleRateBox.Value = new decimal(new int[] {
+            48000,
+            0,
+            0,
+            0});
+            // 
+            // SampleRateLabel
+            // 
+            this.SampleRateLabel.AutoSize = true;
+            this.SampleRateLabel.Location = new System.Drawing.Point(12, 40);
+            this.SampleRateLabel.Name = "SampleRateLabel";
+            this.SampleRateLabel.Size = new System.Drawing.Size(68, 13);
+            this.SampleRateLabel.TabIndex = 9;
+            this.SampleRateLabel.Text = "Sample Rate";
+            // 
+            // DragLabel
+            // 
+            this.DragLabel.AutoSize = true;
+            this.DragLabel.Location = new System.Drawing.Point(83, 146);
+            this.DragLabel.Name = "DragLabel";
+            this.DragLabel.Size = new System.Drawing.Size(110, 13);
+            this.DragLabel.TabIndex = 10;
+            this.DragLabel.Text = "Drag your MP3s here!";
+            // 
+            // YoutubeLabel
+            // 
+            this.YoutubeLabel.AutoSize = true;
+            this.YoutubeLabel.Location = new System.Drawing.Point(12, 69);
+            this.YoutubeLabel.Name = "YoutubeLabel";
+            this.YoutubeLabel.Size = new System.Drawing.Size(72, 13);
+            this.YoutubeLabel.TabIndex = 11;
+            this.YoutubeLabel.Text = "Youtube URL";
+            // 
+            // YoutubeGetButton
+            // 
+            this.YoutubeGetButton.Enabled = false;
+            this.YoutubeGetButton.Location = new System.Drawing.Point(224, 64);
+            this.YoutubeGetButton.Name = "YoutubeGetButton";
+            this.YoutubeGetButton.Size = new System.Drawing.Size(48, 23);
+            this.YoutubeGetButton.TabIndex = 12;
+            this.YoutubeGetButton.Text = "Get";
+            this.YoutubeGetButton.UseVisualStyleBackColor = true;
+            // 
+            // YoutubeBox
+            // 
+            this.YoutubeBox.Enabled = false;
+            this.YoutubeBox.Location = new System.Drawing.Point(86, 65);
+            this.YoutubeBox.Name = "YoutubeBox";
+            this.YoutubeBox.Size = new System.Drawing.Size(132, 20);
+            this.YoutubeBox.TabIndex = 13;
+            // 
             // DragandPlay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 264);
+            this.Controls.Add(this.YoutubeBox);
+            this.Controls.Add(this.YoutubeGetButton);
+            this.Controls.Add(this.YoutubeLabel);
+            this.Controls.Add(this.DragLabel);
+            this.Controls.Add(this.SampleRateLabel);
+            this.Controls.Add(this.SampleRateBox);
+            this.Controls.Add(this.StopButton);
             this.Controls.Add(this.DisconnectButton);
             this.Controls.Add(this.GeneralButton);
             this.Controls.Add(this.FindButton);
@@ -116,6 +204,7 @@
             this.Name = "DragandPlay";
             this.Text = "DragandPlay";
             ((System.ComponentModel.ISupportInitialize)(this.DragBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.SampleRateBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -131,5 +220,13 @@
         public System.ComponentModel.BackgroundWorker Scanner;
         private System.Windows.Forms.Button GeneralButton;
         private System.Windows.Forms.Button DisconnectButton;
+        private System.Windows.Forms.Button StopButton;
+        private System.Windows.Forms.NumericUpDown SampleRateBox;
+        private System.Windows.Forms.Label SampleRateLabel;
+        private System.Windows.Forms.Label DragLabel;
+        private System.Windows.Forms.Label YoutubeLabel;
+        private System.Windows.Forms.Button YoutubeGetButton;
+        private System.Windows.Forms.TextBox YoutubeBox;
+        private System.ComponentModel.BackgroundWorker GetYoutube;
     }
 }

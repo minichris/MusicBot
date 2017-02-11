@@ -42,6 +42,8 @@ namespace MusicBot
                 ControlObj.Enabled = true;
             }
             FindButton.Focus();
+            YoutubeGetButton.Enabled = false;
+            YoutubeBox.Enabled = false;
         }
 
         private void DragBox_DragEnter(object sender, DragEventArgs e)
@@ -135,7 +137,7 @@ namespace MusicBot
 
         private void SongPlayer_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            SongToPlay.Play();
+            SongToPlay.Play(Convert.ToInt32(SampleRateBox.Value));
         }
 
         private async void GeneralButton_Click(object sender, EventArgs e)
@@ -163,6 +165,11 @@ namespace MusicBot
                 Program._client.GetService<AudioService>().Leave(UsersVoiceChannel);
                 UsersVoiceChannel = null;
             }
+        }
+
+        private void StopButton_Click(object sender, EventArgs e)
+        {
+            SongToPlay.Stop();
         }
     }
 }

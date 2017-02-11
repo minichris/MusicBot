@@ -12,17 +12,18 @@ using System.Windows.Forms;
 class Song
 {
     public string FilePath;
+    public VideoInfo Videoinfo;
 
     public string SongViaUrl(string RawURL)
     {
         Directory.CreateDirectory(Program.OutputFolder); // Create video folder if not found
         IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(RawURL);
-        VideoInfo Video = videoInfos.First();
-        string FinalFilePath = Path.Combine(Program.OutputFolder, Video.Title + Video.AudioExtension);
+        VideoInfo Videoinfo = videoInfos.First();
+        string FinalFilePath = Path.Combine(Program.OutputFolder, Videoinfo.Title + Videoinfo.AudioExtension);
         if(!File.Exists(FinalFilePath))
         {
             //construct downloader
-            VideoDownloader downloader = new VideoDownloader(Video, FinalFilePath);
+            VideoDownloader downloader = new VideoDownloader(Videoinfo, FinalFilePath);
             downloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
             try
             {
@@ -37,15 +38,23 @@ class Song
         this.FilePath = FinalFilePath;
         return FilePath;
     }
+    private MediaFoundationResampler resampler;
+    private MediaFoundationReader mediaStream;
 
-    public void Play()
+    public void Stop()
+    {
+        mediaStream.Dispose();
+        resampler.Dispose();
+    }
+
+    public void Play(int SampleRate)
     {
         var channelCount = Program._client.GetService<AudioService>().Config.Channels; // Get the number of AudioChannels our AudioService has been configured to use.
-        WaveFormat OutFormat = new WaveFormat(48000, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.
+        WaveFormat OutFormat = new WaveFormat(SampleRate, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.
         try
         {
-            using (MediaFoundationReader vorbisStream = new MediaFoundationReader(this.FilePath))
-            using (MediaFoundationResampler resampler = new MediaFoundationResampler(vorbisStream, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
+            using (mediaStream = new MediaFoundationReader(this.FilePath))
+            using (resampler = new MediaFoundationResampler(mediaStream, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
             {
                 resampler.ResamplerQuality = 60; // Set the quality of the resampler to 60, the highest quality
                 int blockSize = OutFormat.AverageBytesPerSecond / 50; // Establish the size of our AudioBuffer
