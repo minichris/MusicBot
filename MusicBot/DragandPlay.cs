@@ -10,13 +10,14 @@ namespace MusicBot
 {
     public partial class DragandPlay : Form
     {
-        Song SongToPlay;
-        Channel UsersVoiceChannel = null;
-        Boolean FirstConnectionEstablished;
-        string[] CustomButtonData;
+		Song SongToPlay;
+		Channel UsersVoiceChannel = null;
+		Boolean FirstConnectionEstablished;
+		string[] CustomButtonData;
+
         public DragandPlay()
         {
-            InitializeComponent();
+			InitializeComponent();
             CustomButtonData = File.ReadAllLines("CustomButton.txt");
             GeneralButton.Text = CustomButtonData[2];
             DragBox.AllowDrop = true;
