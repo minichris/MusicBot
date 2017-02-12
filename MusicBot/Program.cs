@@ -18,9 +18,9 @@ class Song
     {
         Directory.CreateDirectory(Program.OutputFolder); // Create video folder if not found
         IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(RawURL);
-        VideoInfo Videoinfo = videoInfos.First();
-        string FinalFilePath = Path.Combine(Program.OutputFolder, Videoinfo.Title + Videoinfo.AudioExtension);
-        if(!File.Exists(FinalFilePath))
+        Videoinfo = videoInfos.First();
+        string FinalFilePath = Path.Combine(Program.OutputFolder, Videoinfo.Title + Videoinfo.AudioExtension); // Grabs path to downloaded song
+        if(!File.Exists(FinalFilePath)) // downloads video if it isn't cached
         {
             //construct downloader
             VideoDownloader downloader = new VideoDownloader(Videoinfo, FinalFilePath);
@@ -75,7 +75,7 @@ class Song
         }
         catch (Exception ReaderException)
         {
-            Console.WriteLine(ReaderException.Message);
+            Console.WriteLine(ReaderException.Message); // Prints any errors to console
         }
 
         Program._vClient.Wait(); // Waits for the currently playing sound file to end.
@@ -92,8 +92,8 @@ class Program
         Application.Run(new DragandPlay());
     }
 
-    public static string botPrefix = "/"; // Defines voting variable
-    public static string OutputFolder = $"{Directory.GetCurrentDirectory()}\\videos";
+    public static string botPrefix = "/"; // Defines prefix variable
+	public static string OutputFolder = $"{Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar}videos"; // Output folder for songs
     public static DiscordClient _client;
     public static IAudioClient _vClient;
 }
