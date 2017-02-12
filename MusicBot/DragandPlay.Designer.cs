@@ -32,7 +32,6 @@
             this.NameBox = new System.Windows.Forms.TextBox();
             this.UsernameLabel = new System.Windows.Forms.Label();
             this.FindButton = new System.Windows.Forms.Button();
-            this.Scanner = new System.ComponentModel.BackgroundWorker();
             this.SongPlayer = new System.ComponentModel.BackgroundWorker();
             this.GeneralButton = new System.Windows.Forms.Button();
             this.DisconnectButton = new System.Windows.Forms.Button();
@@ -81,10 +80,6 @@
             this.FindButton.TabIndex = 4;
             this.FindButton.Text = "Find";
             this.FindButton.UseVisualStyleBackColor = true;
-            // 
-            // Scanner
-            // 
-            this.Scanner.DoWork += new System.ComponentModel.DoWorkEventHandler(this.Scanner_DoWork);
             // 
             // SongPlayer
             // 
@@ -203,6 +198,7 @@
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
             this.Name = "DragandPlay";
             this.Text = "DragandPlay";
+            this.Deactivate += new System.EventHandler(this.DragandPlay_Deactivate);
             ((System.ComponentModel.ISupportInitialize)(this.DragBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SampleRateBox)).EndInit();
             this.ResumeLayout(false);
@@ -217,7 +213,6 @@
         private System.Windows.Forms.Label UsernameLabel;
         private System.Windows.Forms.Button FindButton;
         private System.ComponentModel.BackgroundWorker SongPlayer;
-        public System.ComponentModel.BackgroundWorker Scanner;
         private System.Windows.Forms.Button GeneralButton;
         private System.Windows.Forms.Button DisconnectButton;
         private System.Windows.Forms.Button StopButton;

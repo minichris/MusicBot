@@ -24,7 +24,6 @@ namespace MusicBot
             DragBox.DragEnter += DragBox_DragEnter;
             DragBox.DragDrop += DragBox_DragDrop;
             FindButton.Click += FindButton_Click;
-            Scanner.RunWorkerAsync();
             foreach(Control ControlObj in this.Controls)
             {
                 ControlObj.Enabled = false;
@@ -34,7 +33,7 @@ namespace MusicBot
 
         private async void EnableControls()
         {
-            while (!FirstConnectionEstablished)
+            while (!Program.FirstConnectionEstablished)
             {
                 await Task.Delay(25);
             }
@@ -109,32 +108,7 @@ namespace MusicBot
             }
         }
 
-        private void Scanner_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
-        {
-            Program._client = new DiscordClient();
-
-            Program._client.UsingAudio(x => // Opens an AudioConfigBuilder so we can configure our AudioService
-            {
-                x.Mode = AudioMode.Outgoing; // Tells the AudioService that we will only be sending audio
-            });
-
-            Program._client.Log.Message += (s, MessageEvent) => Console.WriteLine($"[{MessageEvent.Severity}] {MessageEvent.Source}: {MessageEvent.Message}"); // Log errors/info to console
-
-            Program._client.MessageReceived += async (s, MessageEvent) =>
-            {
-                if (MessageEvent.Message.Text == $"{Program.botPrefix}info")
-                    await MessageEvent.Channel.SendMessage($"Hiya! I'm ChrisRadio C# Edition, a Discord Music Bot written in C# using Discord.Net. Check out my source code at <https://github.com/minichris/MusicBot/>.");
-            };
-
-            string[] AccountData = File.ReadAllLines("account.txt");
-            Program._client.ExecuteAndWait(async () =>
-            {
-                await Program._client.Connect(AccountData[0], AccountData[1]);
-                Program._client.SetGame("some music");
-                Console.WriteLine("Connected!");
-                FirstConnectionEstablished = true;
-            });
-        }
+       
 
         private void SongPlayer_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
@@ -159,18 +133,23 @@ namespace MusicBot
             }
         }
 
-        private void DisconnectButton_Click(object sender, EventArgs e)
+        private void DisconnectButton_Click(object sender, EventArgs e) //disconnect button pressed
         {
-            if (UsersVoiceChannel != null)
+            if (UsersVoiceChannel != null) //if the bot is in a voice channel
             {
-                Program._client.GetService<AudioService>().Leave(UsersVoiceChannel);
-                UsersVoiceChannel = null;
+                Program._client.GetService<AudioService>().Leave(UsersVoiceChannel); //leave the voice channel
+                UsersVoiceChannel = null; //set our voice channel to null
             }
         }
 
-        private void StopButton_Click(object sender, EventArgs e)
+        private void StopButton_Click(object sender, EventArgs e) //stop button pressed
         {
-            SongToPlay.Stop();
+            SongToPlay.Stop(); //stop the currently playing song
+        }
+
+        private void DragandPlay_Deactivate(object sender, EventArgs e) //when the form is closed
+        {
+            Program.DiscordClientThread.Abort(); //abort the discord client thread
         }
     }
 }
