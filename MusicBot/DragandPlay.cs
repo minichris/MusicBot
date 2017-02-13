@@ -3,6 +3,7 @@ using Discord.Audio;
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
@@ -42,8 +43,6 @@ namespace MusicBot
                 ControlObj.Enabled = true; //enable the control
             }
             FindButton.Focus();
-            YoutubeGetButton.Enabled = false; //disable this button for now, its not implemented
-            YoutubeBox.Enabled = false; //disable the box too
         }
 
         private void DragBox_DragEnter(object sender, DragEventArgs e) //when something is dragged over the DragBox
@@ -106,12 +105,11 @@ namespace MusicBot
             {
                 MessageBox.Show("We couldn't find you :(\nMaybe try leaving and rejoining the voice channel you're in.");
             }
-        }
-
-       
+        }       
 
         private void SongPlayer_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e) //when SongPlayer.RunWorkerAsync(); is called
         {
+            Console.WriteLine($"Attempting to play song in location {CurrentSong.FilePath}");
             CurrentSong.Play(Convert.ToInt32(SampleRateBox.Value)); //play the song at the sample rate in "SampleRateBox"
         }
 
@@ -150,6 +148,13 @@ namespace MusicBot
         private void DragandPlay_Deactivate(object sender, EventArgs e) //when this form is closed
         {
             Program.DiscordClientThread.Abort(); //abort the discord client thread
+        }
+
+        private async void YoutubeGetButton_Click(object sender, EventArgs e)
+        {
+            CurrentSong = new Song(); //create a new song to hold the data and allow us to play it
+            await CurrentSong.SongViaUrl(YoutubeBox.Text);
+            SongPlayer.RunWorkerAsync(); //run the song playing worker
         }
     }
 }

@@ -9,39 +9,51 @@ using YoutubeExtractor;
 using MusicBot;
 using System.Windows.Forms;
 using System.Threading;
+using System.Threading.Tasks;
+using System.Security.Cryptography;
+using System.Text;
 
 class Song
 {
     public string FilePath;
     public VideoInfo Videoinfo;
+    private MediaFoundationResampler resampler;
+    private MediaFoundationReader mediaStream;
 
-    public string SongViaUrl(string RawURL)
+    public static string GetMD5(string inputString)
+    {
+        HashAlgorithm algorithm = MD5.Create();
+        return Convert.ToString(algorithm.ComputeHash(Encoding.UTF8.GetBytes(inputString)));
+    }
+
+    private void DownloadVideo()
+    {
+        VideoDownloader downloader = new VideoDownloader(Videoinfo, FilePath);
+        downloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
+        try
+        {
+            downloader.Execute();
+        }
+        catch (Exception DownloadException)
+        {
+            Console.WriteLine(DownloadException.Message);
+            Console.WriteLine(DownloadException);
+        }
+    }
+
+    public async Task<string> SongViaUrl(string RawURL)
     {
         Directory.CreateDirectory(Program.OutputFolder); // Create video folder if not found
         IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(RawURL);
         Videoinfo = videoInfos.First();
-        string FinalFilePath = Path.Combine(Program.OutputFolder, Videoinfo.Title + Videoinfo.AudioExtension); // Grabs path to downloaded song
-        if(!File.Exists(FinalFilePath)) // downloads video if it isn't cached
+        FilePath = Path.Combine(Program.OutputFolder, GetMD5(Videoinfo.Title) + Videoinfo.AudioExtension); // Grabs path to downloaded song
+        if (!File.Exists(FilePath)) // downloads video if it isn't cached
         {
-            //construct downloader
-            VideoDownloader downloader = new VideoDownloader(Videoinfo, FinalFilePath);
-            downloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
-            try
-            {
-                downloader.Execute();
-            }
-            catch (Exception DownloadException)
-            {
-                Console.WriteLine(DownloadException.Message);
-                Console.WriteLine(DownloadException);
-            }
+            DownloadVideo();
         }
-        this.FilePath = FinalFilePath;
         return FilePath;
     }
-    private MediaFoundationResampler resampler;
-    private MediaFoundationReader mediaStream;
-
+    
     public void Stop()
     {
         mediaStream.Dispose();

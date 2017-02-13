@@ -168,6 +168,7 @@
             this.YoutubeGetButton.TabIndex = 12;
             this.YoutubeGetButton.Text = "Get";
             this.YoutubeGetButton.UseVisualStyleBackColor = true;
+            this.YoutubeGetButton.Click += new System.EventHandler(this.YoutubeGetButton_Click);
             // 
             // YoutubeBox
             // 
