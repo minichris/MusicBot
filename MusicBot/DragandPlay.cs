@@ -150,10 +150,20 @@ namespace MusicBot
             Program.DiscordClientThread.Abort(); //abort the discord client thread
         }
 
-        private async void YoutubeGetButton_Click(object sender, EventArgs e)
+        private void YoutubeGetButton_Click(object sender, EventArgs e)
         {
-            CurrentSong = new Song(); //create a new song to hold the data and allow us to play it
-            await CurrentSong.SongViaUrl(YoutubeBox.Text);
+            GetYoutube.RunWorkerAsync();
+        }
+
+        private async void GetYoutube_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        {
+            Song NextSong = new Song(); //create a new song to hold the data and allow us to play it
+            await NextSong.SongViaUrl(YoutubeBox.Text);
+            if (CurrentSong != null) //if there is a current song to stop
+            { 
+                CurrentSong.Stop(); //stop the currently playing song
+            }
+            CurrentSong = NextSong;
             SongPlayer.RunWorkerAsync(); //run the song playing worker
         }
     }

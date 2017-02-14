@@ -178,6 +178,10 @@
             this.YoutubeBox.Size = new System.Drawing.Size(132, 20);
             this.YoutubeBox.TabIndex = 13;
             // 
+            // GetYoutube
+            // 
+            this.GetYoutube.DoWork += new System.ComponentModel.DoWorkEventHandler(this.GetYoutube_DoWork);
+            // 
             // DragandPlay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
