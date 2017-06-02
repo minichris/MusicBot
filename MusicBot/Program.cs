@@ -24,7 +24,6 @@ class Program
     public static string botPrefix = "/"; // Defines prefix variable
 	public static string OutputFolder = $"{Directory.GetCurrentDirectory() + Path.DirectorySeparatorChar}videos"; // Output folder for songs
     public static DiscordClient _client;
-    public static IAudioClient _vClient;
     public static bool FirstConnectionEstablished;
     public static Thread DiscordClientThread;
 

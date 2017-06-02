@@ -99,7 +99,7 @@ namespace MusicBot
             }
             if (BotCurrentChannel != null) //Found a user
             {
-                Program._vClient = await Program._client.GetService<AudioService>().Join(BotCurrentChannel); // Join the Voice Channel, and return the IAudioClient.
+                MusicPlayer._vClient = await Program._client.GetService<AudioService>().Join(BotCurrentChannel); // Join the Voice Channel, and return the IAudioClient.
             }
             else
             {
@@ -110,7 +110,7 @@ namespace MusicBot
         private void SongPlayer_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e) //when SongPlayer.RunWorkerAsync(); is called
         {
             Console.WriteLine($"Attempting to play song in location {CurrentSong.FilePath}");
-            CurrentSong.Play(Convert.ToInt32(SampleRateBox.Value)); //play the song at the sample rate in "SampleRateBox"
+            MusicPlayer.Play(CurrentSong); //play the song at the sample rate in "SampleRateBox"
         }
 
         private async void GeneralButton_Click(object sender, EventArgs e)
@@ -123,7 +123,7 @@ namespace MusicBot
                     {
                         if (ChannelObj.Id == ulong.Parse(CustomButtonData[1]))
                         {
-                            Program._vClient = await Program._client.GetService<AudioService>().Join(ChannelObj); // Join the Voice Channel, and return the IAudioClient.
+                            MusicPlayer._vClient = await Program._client.GetService<AudioService>().Join(ChannelObj); // Join the Voice Channel, and return the IAudioClient.
                             BotCurrentChannel = ChannelObj;
                         }
                     }
@@ -142,7 +142,7 @@ namespace MusicBot
 
         private void StopButton_Click(object sender, EventArgs e) //stop button pressed
         {
-            CurrentSong.Stop(); //stop the currently playing song
+            MusicPlayer.Stop(); //stop the currently playing song
         }
 
         private void DragandPlay_Deactivate(object sender, EventArgs e) //when this form is closed
@@ -160,7 +160,7 @@ namespace MusicBot
             YoutubeMusic NextSong = new YoutubeMusic(YoutubeBox.Text); //create a new song to hold the data and allow us to play it
             if (CurrentSong != null) //if there is a current song to stop
             { 
-                CurrentSong.Stop(); //stop the currently playing song
+                MusicPlayer.Stop(); //stop the currently playing song
             }
             CurrentSong = NextSong;
             SongPlayer.RunWorkerAsync(); //run the song playing worker
