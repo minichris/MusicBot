@@ -87,6 +87,10 @@
       <HintPath>..\packages\NVorbis.0.8.5.0\lib\NVorbis.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="policy.2.0.taglib-sharp, Version=0.0.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <HintPath>..\packages\taglib.2.1.0.0\lib\policy.2.0.taglib-sharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
@@ -105,6 +109,10 @@
     <Reference Include="RestSharp, Version=105.2.3.0, Culture=neutral, PublicKeyToken=null">
       <HintPath>..\packages\RestSharp.105.2.3\lib\net452\RestSharp.dll</HintPath>
     </Reference>
+    <Reference Include="taglib-sharp, Version=2.1.0.0, Culture=neutral, PublicKeyToken=db62eba44689b5b0, processorArchitecture=MSIL">
+      <HintPath>..\packages\taglib.2.1.0.0\lib\taglib-sharp.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="WebSocket4Net, Version=0.14.1.0, Culture=neutral, PublicKeyToken=eb4e154b696bf72a, processorArchitecture=MSIL">
       <HintPath>..\packages\WebSocket4Net.0.14.1\lib\net45\WebSocket4Net.dll</HintPath>
       <Private>True</Private>
@@ -119,6 +127,13 @@
     </Compile>
     <Compile Include="DragandPlay.Designer.cs">
       <DependentUpon>DragandPlay.cs</DependentUpon>
+    </Compile>
+    <Compile Include="MP3Music.cs" />
+    <Compile Include="MusicControl.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="MusicControl.Designer.cs">
+      <DependentUpon>MusicControl.cs</DependentUpon>
     </Compile>
     <Compile Include="Player.cs" />
     <Compile Include="Program.cs" />
@@ -147,6 +162,9 @@
   <ItemGroup>
     <EmbeddedResource Include="DragandPlay.resx">
       <DependentUpon>DragandPlay.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="MusicControl.resx">
+      <DependentUpon>MusicControl.cs</DependentUpon>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>

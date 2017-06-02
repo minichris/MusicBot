@@ -45,6 +45,7 @@
             this.GetYoutube = new System.ComponentModel.BackgroundWorker();
             this.VolumeLable = new System.Windows.Forms.Label();
             this.VolumeBox = new System.Windows.Forms.NumericUpDown();
+            this.flowLayoutPanel1 = new System.Windows.Forms.FlowLayoutPanel();
             ((System.ComponentModel.ISupportInitialize)(this.DragBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SampleRateBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.VolumeBox)).BeginInit();
@@ -217,11 +218,19 @@
             0,
             131072});
             // 
+            // flowLayoutPanel1
+            // 
+            this.flowLayoutPanel1.Location = new System.Drawing.Point(291, 12);
+            this.flowLayoutPanel1.Name = "flowLayoutPanel1";
+            this.flowLayoutPanel1.Size = new System.Drawing.Size(366, 244);
+            this.flowLayoutPanel1.TabIndex = 17;
+            // 
             // DragandPlay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(284, 264);
+            this.ClientSize = new System.Drawing.Size(669, 264);
+            this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.VolumeBox);
             this.Controls.Add(this.VolumeLable);
             this.Controls.Add(this.YoutubeBox);
@@ -268,5 +277,6 @@
         private System.ComponentModel.BackgroundWorker GetYoutube;
         private System.Windows.Forms.Label VolumeLable;
         private System.Windows.Forms.NumericUpDown VolumeBox;
+        private System.Windows.Forms.FlowLayoutPanel flowLayoutPanel1;
     }
 }

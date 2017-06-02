@@ -20,7 +20,7 @@ namespace MusicBot
             WaveFormat OutFormat = new WaveFormat(SampleRate, 16, channelCount); // Create a new Output Format, using the spec that Discord will accept, and with the number of channels that our client supports.    
             try
             {
-                mediaStream = new WaveChannel32( new MediaFoundationReader(MusicToPlay.FilePath) , Volume, 0F);
+                mediaStream = new WaveChannel32( new MediaFoundationReader(MusicToPlay.GetFilePath()) , Volume, 0F);
                 using (mediaStream)
                 using (resampler = new MediaFoundationResampler(mediaStream, OutFormat)) // Create a Disposable Resampler, which will convert the read MP3 data to PCM, using our Output Format
                 {

@@ -29,6 +29,9 @@ namespace MusicBot
                 ControlObj.Enabled = false;
             }
             EnableControls();
+            flowLayoutPanel1.Controls.Add(new MusicControl( new YoutubeMusic("https://www.youtube.com/watch?v=vWaRiD5ym74&ab_channel=DNCEVEVO") ));
+            //flowLayoutPanel1.Controls.Add(new MusicControl());
+            //flowLayoutPanel1.Controls.Add(new MusicControl());
         }
 
         private async void EnableControls() //called to enable the controls after the Discord Client connects
@@ -64,10 +67,9 @@ namespace MusicBot
             {
                 MessageBox.Show("One at a time, please!"); //display a message telling the user to only drop one file at a time
             }
-            CurrentSong = new Music(); //create a new song to hold the data and allow us to play it
-            CurrentSong.FilePath = FileList.First(); //set the file path to the path of the dragged in file
+            CurrentSong = new MP3Music(FileList.First()); //create a new song to hold the data and allow us to play it
             SongPlayer.RunWorkerAsync(); //run the song playing worker
-            MessageBox.Show($"Will now attempt to play {FileList.First()}");
+            flowLayoutPanel1.Controls.Add(new MusicControl(CurrentSong));
         }
 
         private async void FindButton_Click(object sender, EventArgs e)
@@ -109,7 +111,7 @@ namespace MusicBot
 
         private void SongPlayer_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e) //when SongPlayer.RunWorkerAsync(); is called
         {
-            Console.WriteLine($"Attempting to play song in location {CurrentSong.FilePath}");
+            Console.WriteLine($"Attempting to play song in location {CurrentSong.GetFilePath()}");
             MusicPlayer.SampleRate = (int) SampleRateBox.Value; //set the player sample rate to that in "SampleRateBox"
             MusicPlayer.Volume = (float) VolumeBox.Value;
             MusicPlayer.Play(CurrentSong); //play the song

@@ -1,9 +1,15 @@
-﻿using System;
-using Discord.Audio;
-using NAudio.Wave;
-using YoutubeExtractor;
-
-class Music
+﻿public class Music
 {
-    public string FilePath;
+    protected string Name;
+    protected string FilePath;
+
+    public string GetName()
+    {
+        return Name;
+    }
+
+    public string GetFilePath()
+    {
+        return FilePath;
+    }
 }
