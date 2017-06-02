@@ -43,15 +43,18 @@
             this.YoutubeGetButton = new System.Windows.Forms.Button();
             this.YoutubeBox = new System.Windows.Forms.TextBox();
             this.GetYoutube = new System.ComponentModel.BackgroundWorker();
+            this.VolumeLable = new System.Windows.Forms.Label();
+            this.VolumeBox = new System.Windows.Forms.NumericUpDown();
             ((System.ComponentModel.ISupportInitialize)(this.DragBox)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.SampleRateBox)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VolumeBox)).BeginInit();
             this.SuspendLayout();
             // 
             // DragBox
             // 
-            this.DragBox.Location = new System.Drawing.Point(12, 91);
+            this.DragBox.Location = new System.Drawing.Point(12, 122);
             this.DragBox.Name = "DragBox";
-            this.DragBox.Size = new System.Drawing.Size(260, 113);
+            this.DragBox.Size = new System.Drawing.Size(260, 82);
             this.DragBox.TabIndex = 1;
             this.DragBox.TabStop = false;
             // 
@@ -144,7 +147,7 @@
             // DragLabel
             // 
             this.DragLabel.AutoSize = true;
-            this.DragLabel.Location = new System.Drawing.Point(83, 146);
+            this.DragLabel.Location = new System.Drawing.Point(83, 158);
             this.DragLabel.Name = "DragLabel";
             this.DragLabel.Size = new System.Drawing.Size(110, 13);
             this.DragLabel.TabIndex = 10;
@@ -182,11 +185,45 @@
             // 
             this.GetYoutube.DoWork += new System.ComponentModel.DoWorkEventHandler(this.GetYoutube_DoWork);
             // 
+            // VolumeLable
+            // 
+            this.VolumeLable.AutoSize = true;
+            this.VolumeLable.Location = new System.Drawing.Point(12, 94);
+            this.VolumeLable.Name = "VolumeLable";
+            this.VolumeLable.Size = new System.Drawing.Size(42, 13);
+            this.VolumeLable.TabIndex = 15;
+            this.VolumeLable.Text = "Volume";
+            // 
+            // VolumeBox
+            // 
+            this.VolumeBox.DecimalPlaces = 2;
+            this.VolumeBox.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            65536});
+            this.VolumeBox.Location = new System.Drawing.Point(86, 91);
+            this.VolumeBox.Maximum = new decimal(new int[] {
+            15,
+            0,
+            0,
+            65536});
+            this.VolumeBox.Name = "VolumeBox";
+            this.VolumeBox.Size = new System.Drawing.Size(132, 20);
+            this.VolumeBox.TabIndex = 16;
+            this.VolumeBox.Value = new decimal(new int[] {
+            25,
+            0,
+            0,
+            131072});
+            // 
             // DragandPlay
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(284, 264);
+            this.Controls.Add(this.VolumeBox);
+            this.Controls.Add(this.VolumeLable);
             this.Controls.Add(this.YoutubeBox);
             this.Controls.Add(this.YoutubeGetButton);
             this.Controls.Add(this.YoutubeLabel);
@@ -206,6 +243,7 @@
             this.Deactivate += new System.EventHandler(this.DragandPlay_Deactivate);
             ((System.ComponentModel.ISupportInitialize)(this.DragBox)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.SampleRateBox)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.VolumeBox)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -228,5 +266,7 @@
         private System.Windows.Forms.Button YoutubeGetButton;
         private System.Windows.Forms.TextBox YoutubeBox;
         private System.ComponentModel.BackgroundWorker GetYoutube;
+        private System.Windows.Forms.Label VolumeLable;
+        private System.Windows.Forms.NumericUpDown VolumeBox;
     }
 }

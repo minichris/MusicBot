@@ -111,6 +111,7 @@ namespace MusicBot
         {
             Console.WriteLine($"Attempting to play song in location {CurrentSong.FilePath}");
             MusicPlayer.SampleRate = (int) SampleRateBox.Value; //set the player sample rate to that in "SampleRateBox"
+            MusicPlayer.Volume = (float) VolumeBox.Value;
             MusicPlayer.Play(CurrentSong); //play the song
         }
 
@@ -153,7 +154,10 @@ namespace MusicBot
 
         private void YoutubeGetButton_Click(object sender, EventArgs e)
         {
-            GetYoutube.RunWorkerAsync();
+            if (!GetYoutube.IsBusy)
+            {
+                GetYoutube.RunWorkerAsync();
+            }
         }
 
         private void GetYoutube_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
