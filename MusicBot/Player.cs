@@ -14,7 +14,7 @@ namespace MusicBot
         public static IAudioClient _vClient;
         private static MediaFoundationResampler resampler;
         private static MediaFoundationReader mediaStream;
-        private static int SampleRate = 48000;
+        public static int SampleRate;
 
         public static void Play(Music MusicToPlay)
         {

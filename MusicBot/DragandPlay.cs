@@ -110,7 +110,8 @@ namespace MusicBot
         private void SongPlayer_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e) //when SongPlayer.RunWorkerAsync(); is called
         {
             Console.WriteLine($"Attempting to play song in location {CurrentSong.FilePath}");
-            MusicPlayer.Play(CurrentSong); //play the song at the sample rate in "SampleRateBox"
+            MusicPlayer.SampleRate = (int) SampleRateBox.Value; //set the player sample rate to that in "SampleRateBox"
+            MusicPlayer.Play(CurrentSong); //play the song
         }
 
         private async void GeneralButton_Click(object sender, EventArgs e)
