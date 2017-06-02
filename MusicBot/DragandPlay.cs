@@ -11,7 +11,7 @@ namespace MusicBot
 {
     public partial class DragandPlay : Form
     {
-		Song CurrentSong;
+		Music CurrentSong;
 		Channel BotCurrentChannel = null;
 		string[] CustomButtonData;
 
@@ -64,7 +64,7 @@ namespace MusicBot
             {
                 MessageBox.Show("One at a time, please!"); //display a message telling the user to only drop one file at a time
             }
-            CurrentSong = new Song(); //create a new song to hold the data and allow us to play it
+            CurrentSong = new Music(); //create a new song to hold the data and allow us to play it
             CurrentSong.FilePath = FileList.First(); //set the file path to the path of the dragged in file
             SongPlayer.RunWorkerAsync(); //run the song playing worker
             MessageBox.Show($"Will now attempt to play {FileList.First()}");
@@ -155,10 +155,9 @@ namespace MusicBot
             GetYoutube.RunWorkerAsync();
         }
 
-        private async void GetYoutube_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
+        private void GetYoutube_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         {
-            Song NextSong = new Song(); //create a new song to hold the data and allow us to play it
-            await NextSong.SongViaUrl(YoutubeBox.Text);
+            YoutubeMusic NextSong = new YoutubeMusic(YoutubeBox.Text); //create a new song to hold the data and allow us to play it
             if (CurrentSong != null) //if there is a current song to stop
             { 
                 CurrentSong.Stop(); //stop the currently playing song

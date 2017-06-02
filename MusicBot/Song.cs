@@ -1,63 +1,13 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using Discord.Audio;
-using System.IO;
 using NAudio.Wave;
 using YoutubeExtractor;
-using System.Threading.Tasks;
-using System.Security.Cryptography;
-using System.Text;
 
-class Song
+class Music
 {
     public string FilePath;
-    public VideoInfo Videoinfo;
     private MediaFoundationResampler resampler;
     private MediaFoundationReader mediaStream;
-    private VideoDownloader downloader;
-    private TaskCompletionSource<bool> DownloadFinishedEvent = new TaskCompletionSource<bool>();
-
-    public static string GetMD5(string inputString)
-    {
-        Console.WriteLine($"Getting the MD5 of {inputString}");
-        byte[] encodedPassword = new UTF8Encoding().GetBytes(inputString);
-        byte[] hash = ((HashAlgorithm)CryptoConfig.CreateFromName("MD5")).ComputeHash(encodedPassword);
-        string encoded = BitConverter.ToString(hash).Replace("-", string.Empty).ToUpper();
-        Console.Write($" which is {encoded}");
-        return encoded;
-    }
-
-    private async Task DownloadVideo()
-    {
-        downloader = new VideoDownloader(Videoinfo, FilePath);
-        downloader.DownloadProgressChanged += (sender, args) => Console.WriteLine(args.ProgressPercentage);
-        try
-        {
-            downloader.Execute();
-            DownloadFinishedEvent.SetResult(true);
-        }
-        catch (Exception DownloadException)
-        {
-            Console.WriteLine(DownloadException);
-        }
-        await DownloadFinishedEvent.Task;
-    }
-
-    public async Task<string> SongViaUrl(string RawURL)
-    {
-        Console.WriteLine($"Opening / creating output folder at: {Program.OutputFolder}");
-        Directory.CreateDirectory(Program.OutputFolder); // Create video folder if not found
-        IEnumerable<VideoInfo> videoInfos = DownloadUrlResolver.GetDownloadUrls(RawURL);
-        Videoinfo = videoInfos.First();
-        FilePath = Path.Combine(Program.OutputFolder, GetMD5(Videoinfo.Title) + Videoinfo.AudioExtension); // Grabs path to downloaded song
-        Console.WriteLine($"Trying to find song at path: {FilePath}");
-        if (!File.Exists(FilePath)) // downloads video if it isn't cached
-        {
-            await DownloadVideo();
-        }
-        return FilePath;
-    }
 
     public void Stop()
     {
